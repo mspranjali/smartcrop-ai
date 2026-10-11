@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}Model Performance – SmartCrop AI{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+
+    <div class="page-header">
+      <h1>Model Performance</h1>
+      <p>All metrics are computed on a held-out 20% test set and are never fabricated.</p>
+    </div>
+
+    {% if metrics is none %}
+      <div class="alert alert-warning">
+        Metrics file not found. Run <code>python train_model.py</code> and restart the app.
+      </div>
+    {% else %}
+
+    <!-- Dataset overview -->
+    <div class="metrics-overview">
+      <div class="metric-box">
+        <span class="metric-val">{{ metrics.total_samples }}</span>
+        <span class="metric-lbl">Total Samples</span>
+      </div>
+      <div class="metric-box">
+        <span class="metric-val">{{ metrics.train_size }}</span>
+        <span class="metric-lbl">Training Samples</span>
+      </div>
+      <div class="metric-box">
+        <span class="metric-val">{{ metrics.test_size }}</span>
+        <span class="metric-lbl">Test Samples</span>
+      </div>
+      <div class="metric-box">
+        <span class="metric-val">{{ metrics.classes | length }}</span>
+        <span class="metric-lbl">Crop Classes</span>
+      </div>
+    </div>
+
+    <!-- Best model highlight -->
+    <div class="card best-model-card">
+      <div class="best-model-badge">✓ Best Model</div>
+      <h2>{{ metrics.best_model }}</h2>
+      <div class="perf-metrics">
+        <div class="perf-metric">
+          <span class="perf-val">{{ "%.2f"|format(metrics.best_model_detail.accuracy * 100) }}%</span>
+          <span class="perf-lbl">Accuracy</span>
+        </div>
+        <div class="perf-metric">
+          <span class="perf-val">{{ "%.4f"|format(metrics.best_model_detail.precision) }}</span>
+          <span class="perf-lbl">Precision</span>
+        </div>
+        <div class="perf-metric">
+          <span class="perf-val">{{ "%.4f"|format(metrics.best_model_detail.recall) }}</span>
+          <span class="perf-lbl">Recall</span>
+        </div>
+        <div class="perf-metric">
+          <span class="perf-val">{{ "%.4f"|format(metrics.best_model_detail.f1_score) }}</span>
+          <span class="perf-lbl">F1-Score</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model comparison table -->
+    <div class="card">
+      <h2 class="card-title">📊 Model Comparison</h2>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Accuracy</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>F1-Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for model_name, m in metrics.comparison.items() %}
+            <tr class="{% if model_name == metrics.best_model %}row-best{% endif %}">
+              <td>
+                {{ model_name }}
+                {% if model_name == metrics.best_model %}<span class="badge-best">Best</span>{% endif %}
+              </td>
+              <td>{{ "%.4f"|format(m.accuracy) }}</td>
+              <td>{{ "%.4f"|format(m.precision) }}</td>
+              <td>{{ "%.4f"|format(m.recall) }}</td>
+              <td>{{ "%.4f"|format(m.f1_score) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Bar chart (rendered via JS) -->
+    <div class="card">
+      <h2 class="card-title">📈 F1-Score Comparison</h2>
+      <canvas id="modelChart" height="100"></canvas>
+    </div>
+
+    <!-- Per-class F1 -->
+    <div class="card">
+      <h2 class="card-title">🌾 Per-Class F1-Score ({{ metrics.best_model }})</h2>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Crop</th><th>F1-Score</th><th>Performance</th></tr>
+          </thead>
+          <tbody>
+            {% for crop, score in metrics.per_class_f1.items() | sort(attribute='1', reverse=true) %}
+            <tr>
+              <td>{{ crop | capitalize }}</td>
+              <td>{{ "%.4f"|format(score) }}</td>
+              <td>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: {{ (score * 100)|round(1) }}%"></div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% if metrics.feature_importances %}
+    <!-- Feature importances -->
+    <div class="card">
+      <h2 class="card-title">🔬 Feature Importances ({{ metrics.best_model }})</h2>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Feature</th><th>Importance</th><th>Contribution</th></tr>
+          </thead>
+          <tbody>
+            {% for feat, imp in metrics.feature_importances.items() | sort(attribute='1', reverse=true) %}
+            <tr>
+              <td>{{ feat }}</td>
+              <td>{{ "%.4f"|format(imp) }}</td>
+              <td>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill progress-accent"
+                       style="width: {{ (imp * 100 / metrics.feature_importances.values() | max * 100)|round(1) }}%"></div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Pass data to JS -->
+    <script>
+      window.CHART_DATA = {
+        labels: {{ metrics.comparison.keys() | list | tojson }},
+        f1:     {{ metrics.comparison.values() | map(attribute='f1_score') | list | tojson }},
+        acc:    {{ metrics.comparison.values() | map(attribute='accuracy') | list | tojson }}
+      };
+    </script>
+
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

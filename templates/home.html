@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}SmartCrop AI – Home{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content">
+    <h1 class="hero-title">SmartCrop AI</h1>
+    <p class="hero-subtitle">Intelligent Crop Recommendation System</p>
+    <p class="hero-desc">
+      Enter your soil and climate parameters to receive a data-driven crop suggestion
+      powered by machine learning trained on 2,200 agricultural records.
+    </p>
+    {% if not model_ready %}
+      <div class="alert alert-warning">
+        ⚠ Model not found. Run <code>python train_model.py</code> before making predictions.
+      </div>
+    {% endif %}
+    <a href="{{ url_for('recommend') }}" class="btn btn-primary btn-lg">Get Recommendation →</a>
+  </div>
+  <div class="hero-visual" aria-hidden="true">
+    <div class="crop-grid">
+      {% for emoji in ["🌾","🌽","🍅","🥜","🍇","☕","🥥","🍌","🍎","🌿"] %}
+        <span class="crop-emoji">{{ emoji }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Features strip -->
+<section class="features section">
+  <div class="container">
+    <h2 class="section-title">How It Works</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🧪</div>
+        <h3>Input Parameters</h3>
+        <p>Provide seven soil and climate values: N, P, K, temperature, humidity, pH, and rainfall.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>ML Prediction</h3>
+        <p>A trained Random Forest or best-performing classifier analyses your inputs against historical data.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>Crop Suggestion</h3>
+        <p>Receive a recommended crop along with season, water needs, and a brief description.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Transparent Metrics</h3>
+        <p>View real model accuracy, F1-scores, and a confusion matrix on the Performance page.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SDG section -->
+<section class="sdg-section section bg-light">
+  <div class="container">
+    <h2 class="section-title">Sustainable Development Goals</h2>
+    <div class="sdg-grid">
+      <div class="sdg-card">
+        <div class="sdg-badge sdg-2">SDG 2</div>
+        <h3>Zero Hunger</h3>
+        <p>
+          By helping farmers identify crops better suited to their soil and climate conditions,
+          data-driven recommendations can support more informed planting decisions,
+          potentially contributing to improved food productivity and security.
+        </p>
+      </div>
+      <div class="sdg-card">
+        <div class="sdg-badge sdg-12">SDG 12</div>
+        <h3>Responsible Consumption &amp; Production</h3>
+        <p>
+          Recommending crops aligned with local conditions may help reduce the overuse of
+          inputs such as water, fertilisers, and pesticides, supporting more sustainable and
+          resource-efficient agricultural practices.
+        </p>
+      </div>
+    </div>
+    <p class="sdg-disclaimer">
+      <strong>Disclaimer:</strong> This tool provides data-driven suggestions based on historical patterns.
+      It does not guarantee agricultural outcomes. Results should be verified with local experts and agronomists.
+    </p>
+  </div>
+</section>
+{% endblock %}

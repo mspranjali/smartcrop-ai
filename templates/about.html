@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}About – SmartCrop AI{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container container-md">
+
+    <div class="page-header">
+      <h1>About SmartCrop AI</h1>
+      <p>A college machine-learning project for intelligent crop recommendation.</p>
+    </div>
+
+    <!-- Problem statement -->
+    <div class="card">
+      <h2 class="card-title">🎯 Problem Statement</h2>
+      <p>
+        Smallholder farmers often lack access to soil-testing services or agronomic expertise,
+        leading to sub-optimal crop choices for their local conditions. Poor crop–soil–climate
+        alignment can result in lower yields, higher input costs, and increased environmental
+        strain from unnecessary fertiliser and water use.
+      </p>
+      <p>
+        SmartCrop AI addresses this gap by applying machine learning to a labelled dataset of
+        soil and climate observations, enabling quick, data-informed crop suggestions through
+        a simple web interface.
+      </p>
+    </div>
+
+    <!-- Methodology -->
+    <div class="card">
+      <h2 class="card-title">⚙ Methodology</h2>
+      <ol class="method-list">
+        <li>
+          <strong>Dataset:</strong> 2,200 labelled records with seven features
+          (N, P, K, temperature, humidity, pH, rainfall) covering 22 crop classes.
+        </li>
+        <li>
+          <strong>Preprocessing:</strong> Dataset validated for null values and class balance;
+          labels encoded with <code>LabelEncoder</code>.
+        </li>
+        <li>
+          <strong>Train/Test Split:</strong> 80/20 stratified split to ensure each class is
+          proportionally represented in both subsets.
+        </li>
+        <li>
+          <strong>Model Training:</strong> Three classifiers trained and compared —
+          Decision Tree, K-Nearest Neighbours, and Random Forest.
+        </li>
+        <li>
+          <strong>Evaluation:</strong> Models evaluated on accuracy, weighted precision,
+          recall, and F1-score on the held-out test set.
+        </li>
+        <li>
+          <strong>Model Selection:</strong> The classifier with the highest weighted F1-score
+          is saved and used for all web predictions.
+        </li>
+        <li>
+          <strong>Deployment:</strong> Saved model loaded once at application startup;
+          predictions served in real-time via the Flask web interface.
+        </li>
+      </ol>
+    </div>
+
+    <!-- Tech stack -->
+    <div class="card">
+      <h2 class="card-title">🛠 Technology Stack</h2>
+      <div class="tech-grid">
+        <div class="tech-item"><span class="tech-icon">🐍</span><span>Python 3</span></div>
+        <div class="tech-item"><span class="tech-icon">🌐</span><span>Flask</span></div>
+        <div class="tech-item"><span class="tech-icon">🤖</span><span>scikit-learn</span></div>
+        <div class="tech-item"><span class="tech-icon">🐼</span><span>Pandas</span></div>
+        <div class="tech-item"><span class="tech-icon">🔢</span><span>NumPy</span></div>
+        <div class="tech-item"><span class="tech-icon">🎨</span><span>HTML/CSS/JS</span></div>
+      </div>
+    </div>
+
+    <!-- SDG connection -->
+    <div class="card">
+      <h2 class="card-title">🌍 SDG Connection</h2>
+      <div class="sdg-about-grid">
+        <div>
+          <h3>SDG 2 – Zero Hunger</h3>
+          <p>
+            UN SDG 2 aims to end hunger and promote sustainable agriculture by 2030.
+            Tools that help farmers make better-informed planting decisions could,
+            over time, contribute to improved food security at the community level.
+            SmartCrop AI demonstrates how machine learning can make agronomic
+            knowledge more accessible, particularly in resource-constrained settings.
+          </p>
+        </div>
+        <div>
+          <h3>SDG 12 – Responsible Consumption &amp; Production</h3>
+          <p>
+            SDG 12 calls for sustainable management of natural resources and reduction
+            of waste. By recommending crops that are naturally aligned with local soil
+            and climate conditions, this system illustrates how technology could support
+            more resource-efficient farming — reducing the need for excessive
+            irrigation, fertilisation, or pesticide application.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Limitations -->
+    <div class="card">
+      <h2 class="card-title">⚠ Limitations</h2>
+      <ul class="limitation-list">
+        <li>The model is trained on a single public dataset; regional soil variation is not captured.</li>
+        <li>No temporal data — seasonal weather variability, El Niño cycles, etc. are not modelled.</li>
+        <li>Market prices, labour costs, and infrastructure are outside the model scope.</li>
+        <li>The system cannot account for pest pressure, diseases, or soil microbiome dynamics.</li>
+        <li>Predictions should be treated as a starting point for discussion, not as definitive advice.</li>
+        <li>Input values outside the training data distribution may produce unreliable outputs.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

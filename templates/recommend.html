@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Crop Recommendation – SmartCrop AI{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container container-sm">
+
+    <div class="page-header">
+      <h1>Crop Recommendation</h1>
+      <p>Fill in all seven parameters. Values outside the accepted range will be flagged before submission.</p>
+    </div>
+
+    {% if error %}
+      <div class="alert alert-error">
+        Model not found. Please run <code>python train_model.py</code> and restart the app.
+      </div>
+    {% else %}
+    <form class="recommend-form" method="POST" action="{{ url_for('recommend') }}" novalidate id="recommendForm">
+
+      <div class="form-section-title">🌱 Soil Nutrients</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="N">Nitrogen (N) <span class="unit">kg/ha</span></label>
+          <input type="number" id="N" name="N" step="any" min="0" max="200"
+                 placeholder="0 – 200"
+                 value="{{ form_data.N if form_data else '' }}" required />
+          <span class="form-hint">Ratio of Nitrogen content in soil</span>
+        </div>
+        <div class="form-group">
+          <label for="P">Phosphorus (P) <span class="unit">kg/ha</span></label>
+          <input type="number" id="P" name="P" step="any" min="0" max="200"
+                 placeholder="0 – 200"
+                 value="{{ form_data.P if form_data else '' }}" required />
+          <span class="form-hint">Ratio of Phosphorous content in soil</span>
+        </div>
+        <div class="form-group">
+          <label for="K">Potassium (K) <span class="unit">kg/ha</span></label>
+          <input type="number" id="K" name="K" step="any" min="0" max="200"
+                 placeholder="0 – 200"
+                 value="{{ form_data.K if form_data else '' }}" required />
+          <span class="form-hint">Ratio of Potassium content in soil</span>
+        </div>
+        <div class="form-group">
+          <label for="ph">Soil pH <span class="unit">0–14</span></label>
+          <input type="number" id="ph" name="ph" step="any" min="0" max="14"
+                 placeholder="0 – 14"
+                 value="{{ form_data.ph if form_data else '' }}" required />
+          <span class="form-hint">pH value of the soil</span>
+        </div>
+      </div>
+
+      <div class="form-section-title">🌦 Climate Conditions</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="temperature">Temperature <span class="unit">°C</span></label>
+          <input type="number" id="temperature" name="temperature" step="any" min="-10" max="55"
+                 placeholder="-10 – 55"
+                 value="{{ form_data.temperature if form_data else '' }}" required />
+          <span class="form-hint">Average temperature in Celsius</span>
+        </div>
+        <div class="form-group">
+          <label for="humidity">Humidity <span class="unit">%</span></label>
+          <input type="number" id="humidity" name="humidity" step="any" min="0" max="100"
+                 placeholder="0 – 100"
+                 value="{{ form_data.humidity if form_data else '' }}" required />
+          <span class="form-hint">Relative humidity in %</span>
+        </div>
+        <div class="form-group">
+          <label for="rainfall">Rainfall <span class="unit">mm</span></label>
+          <input type="number" id="rainfall" name="rainfall" step="any" min="0" max="4000"
+                 placeholder="0 – 4000"
+                 value="{{ form_data.rainfall if form_data else '' }}" required />
+          <span class="form-hint">Annual rainfall in mm</span>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg">Predict Crop →</button>
+        <button type="reset" class="btn btn-outline">Clear</button>
+      </div>
+    </form>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}
